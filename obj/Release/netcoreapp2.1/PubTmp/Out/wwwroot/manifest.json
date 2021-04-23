@@ -1,0 +1,24 @@
+
+  {
+    "name": "ToDoList Web App",
+    "short_name": "ToDo2",
+    "orientation": "portrait",
+    "display": "standalone",
+    "icons": [
+      {
+        "src": "images/logox192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "images/logox512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "/home/home1",
+    "color": "#ffffff",
+    "background_color": "#20c4f4",
+    "theme_color": "#20c4f4"
+  }
+

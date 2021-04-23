@@ -1,0 +1,9 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\renuka.devi.pampana\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\renuka.devi.pampana\\.nuget\\packages",
+      "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+    ]
+  }
+}

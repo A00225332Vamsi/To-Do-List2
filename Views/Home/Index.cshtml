@@ -1,0 +1,273 @@
+﻿@model TodoList1.ViewModels.HomeViewModel
+@{
+    ViewBag.Title = "ToDo Tasks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="customDiv">
+                Recently Completed Tasks
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="success">
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Completed On</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.LstRecentlyCompletedItems)
+                            {
+                                <tr class="info">
+                                    <td>@item.Title </td>
+                                    <td>@item.Description</td>
+                                    <td>@item.DoneDate.ToString("dd/mm/yyyy")</td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="customDiv">
+                Non Completed Tasks
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="success">
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Due Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.LstAllDueItems)
+                            {
+                                string btnCopyId = "btnCopy" + item.Id;
+                                <tr class="info">
+                                    <td>
+                                        <a class="btn-copy-input input-group-prepend mr-1" id="@btnCopyId" data-title="Copy" href="#" role="button" onclick="copytoclipboard(event, '@item.Title', '@btnCopyId')" data-original-title="Copy">
+                                            <img width="38" src="/images/copy64.png">
+                                        </a>
+                                        <span> @item.Title</span>
+                                    </td>
+                                    <td>@item.Description</td>
+                                    <td>@item.DueDate</td>
+                                    <td>
+                                        <a asp-controller="home" asp-action="DeleteItem"
+                                           asp-route-id="@item.Id">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="customDiv">
+                Due Tasks
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="success">
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Due Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.LstDueItems)
+                            {
+                                <tr class="active">
+                                    <td>@item.Title</td>
+                                    <td>@item.Description</td>
+                                    <td>@item.DueDate</td>
+                                    <td>
+                                      
+                                        <a asp-controller="home" asp-action="CompleteItem"
+                                           asp-route-TaskId="@item.Id" class="btnDoneitem">Done</a>
+
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .customDiv {
+        margin: 1px;
+        min-height: 300px;
+        background-color: honeydew;
+        text-align: center;
+        font-size: large
+    }
+</style>
+
+    <script type="text/javascript">
+       
+    //    let titleContent = document.getElementsByName("spnTitle").value();
+        let allowedEl = document.querySelector('.allowed');
+        let blockedEl = document.querySelector('.blocked');
+        function handleDenied() {
+            // clipboard-write - granted by default
+            if (navigator.clipboard.readText) {
+            navigator.permissions.query({ name: 'clipboard-read' })
+                .then(function (result) {
+                    if (result.state == 'denied') {
+                        allowedEl.classList.add('d-none');
+                        blockedEl.classList.remove('d-none');
+                    }
+                    result.onchange = function () {
+                        if (result.state == 'denied') {
+                            allowedEl.classList.add('d-none');
+                            blockedEl.classList.remove('d-none');
+                        } else {
+                            blockedEl.classList.add('d-none');
+                            allowedEl.classList.remove('d-none');
+                        }
+                    }
+                })
+                .catch((err) => { console.error(err); });
+            } else {
+            console.error('Clipboard readText function not found.');
+                allowedEl.classList.add('d-none');
+                document.querySelector('.not-supported').classList.remove('d-none');
+            }
+        }
+
+
+        function copytoclipboard(e, title, id) {
+         
+            let copyInputButton = document.getElementById(id);
+            //document.querySelector('#btnCopyId')
+
+            // new BSN.Tooltip(copyInputButton, {placement: 'top', animation: 'fade', delay: 100 });
+          
+            e.preventDefault();
+            let txt = title;
+
+                navigator.clipboard.writeText(txt)
+                    .then(() => {
+                        copyInputButton.dataset.title = 'Copied to clipboard.';
+                        //  new BSN.Tooltip(copyInputButton, {placement: 'top', animation: 'fade', delay: 100 }).show();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        copyInputButton.dataset.title = 'Permission denied.';
+                        // new BSN.Tooltip(copyInputButton, {placement: 'top', animation: 'fade', delay: 100 }).show();
+                    });
+        }
+        //document.addEventListener('DOMContentLoaded', function () {
+
+        //    let moreButton = document.querySelector('.btn-more');
+        //    moreButton.addEventListener('click', function (e) {
+        //    e.preventDefault();
+        //        if (document.querySelector('.more-div').classList.toggle('d-none'))
+        //            moreButton.innerText = 'More';
+        //        else
+        //            moreButton.innerText = 'Hide';
+        //    });
+
+            //chrome://settings/content/clipboard
+            if (navigator.clipboard) {
+            handleDenied();
+            } else {
+            showMessageModal('This client does not support navigator.clipboard.', 'alert-danger');
+            }
+
+        //let copyInputButton = document.querySelector('.btn-copy-input');
+        //    //document.querySelector('#btnCopyId')
+           
+        //   // new BSN.Tooltip(copyInputButton, {placement: 'top', animation: 'fade', delay: 100 });
+        //    copyInputButton.addEventListener('click', async function (e) { 
+        //        
+        //    e.preventDefault();
+        //        let txt = e.currentTarget.nextElementSibling.innerText;
+             
+        //        navigator.clipboard.writeText(txt)
+        //            .then(() => {
+        //    copyInputButton.dataset.title = 'Copied to clipboard.';
+        //              //  new BSN.Tooltip(copyInputButton, {placement: 'top', animation: 'fade', delay: 100 }).show();
+        //            })
+        //            .catch((err) => {
+        //    console.error(err);
+        //                copyInputButton.dataset.title = 'Permission denied.';
+        //               // new BSN.Tooltip(copyInputButton, {placement: 'top', animation: 'fade', delay: 100 }).show();
+        //            });
+
+        //    });
+        //    copyInputButton.addEventListener('hidden.bs.tooltip', function (e) {
+        //    copyInputButton.dataset.title = 'Copy';
+        //    });
+
+        ////    let pasteButton = document.querySelector('.btn-paste');
+        ////    new BSN.Tooltip(pasteButton, {placement: 'top', animation: 'fade', delay: 100 });
+        ////    let pasteInput = document.querySelector('.txt-paste');
+        ////    pasteButton.addEventListener('click', async function (e) {
+        ////    e.preventDefault();
+        ////        navigator.clipboard.readText()
+        ////            .then(txt => {
+        ////    pasteButton.dataset.title = 'Pasted from clipboard.';
+        ////                new BSN.Tooltip(pasteButton, {placement: 'top', animation: 'fade', delay: 100 }).show();
+        ////                if (txt == '') txt = '<EMPTY>';
+        ////pasteInput.value = txt;
+        ////})
+        ////            .catch((err) => {
+        ////        pasteButton.dataset.title = 'Permission denied.';
+        ////                new BSN.Tooltip(pasteButton, {placement: 'top', animation: 'fade', delay: 100 }).show();
+        ////                console.error(err);
+        ////                pasteInput.value = '<BLOCKED>';
+        ////    });
+        ////    });
+        ////    pasteButton.addEventListener('hidden.bs.tooltip', function () {
+        ////            pasteButton.dataset.title = 'Paste';
+        ////        pasteButton.blur();
+        //    });
+
+            let i;
+            let copyButtons = document.querySelectorAll('.btn-copy');
+            let copyButtonCount = copyButtons.length;
+            //for (i = 0; i < copyButtonCount; {
+            //    //    new BSN.Tooltip(copyButtons[i], { placement: 'top', animation: 'fade', delay: 100 });
+            //    copyButtons[i].addEventListener('click', async function (e) {
+            //        e.preventDefault();
+            //        let currentEl = e.currentTarget;
+            //        let txt = e.currentTarget.lastElementChild.innerText;
+            //        navigator.clipboard.writeText(txt)
+            //            .then(() => {
+            //        currentEl.dataset.title = 'Copied to clipboard.';
+            //              //  new BSN.Tooltip(currentEl, {placement: 'top', animation: 'fade', delay: 100 }).show();
+            //            })
+            //            .catch((err) => {
+            //        console.error(err);
+            //                currentEl.dataset.title = 'Permission denied.';
+            //              //  new BSN.Tooltip(currentEl, {placement: 'top', animation: 'fade', delay: 100 }).show();
+            //            });
+            //    });
+
+                //copyButtons[i].addEventListener('hidden.bs.tooltip', function (e) {
+                //    e.currentTarget.dataset.title = 'Copy';
+                //});
+           // }
+       // });
+</script>
